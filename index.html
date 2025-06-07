@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MNcompiler</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="icon" href="src/7560719.png">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/dracula.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/hint/show-hint.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/fold/foldgutter.min.css">
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/clike/clike.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/javascript/javascript.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/hint/show-hint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/hint/anyword-hint.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/lint/python-lint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/lint/javascript-lint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/lint/clike-lint.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/edit/closebrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/edit/matchbrackets.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/fold/foldcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/fold/foldgutter.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/fold/brace-fold.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/selection/active-line.min.js"></script>
+
+</head>
+<body class="bg-gray-900 text-white">
+
+    <nav class="bg-gray-800 shadow-md p-4 flex justify-between items-center">
+        <h1 class="text-2xl font-bold">MNcompiler</h1>
+        
+        <div class="flex items-center gap-2">
+            <button onclick="openShortcutModal()" class="bg-blue-800 hover:bg-blue-700 px-3 py-2 rounded">
+                <i class="fa-solid fa-circle-info"> </i>
+            </button>
+            <select id="languageSelect" class="bg-gray-700 text-white p-2 rounded">
+                <option value="python" selected>Python</option>
+                <option value="c">C</option>
+                <option value="cpp">C++</option>
+                <option value="java">Java</option>
+                <option value="javascript">JavaScript</option>
+            </select>
+            <button id="runCode" class="bg-green-500 hover:bg-green-600 px-3 py-2 rounded">Run</button>
+        </div>
+    </nav>
+
+    <div class="flex flex-col lg:flex-row gap-4 p-6">
+        
+        <div class="flex-1 bg-gray-800 p-4 rounded-lg shadow-lg h-[590px] sm:w-[750px]">
+        <h2 class="text-lg font-semibold mb-2">💻 Code Editor</h2>
+            <textarea id="codeEditor" class="w-full h-[450px] bg-gray-700 text-white p-2 rounded resize-none"></textarea>
+            
+            <div class="mt-4">  
+                <label for="userInput" class="block text-sm font-semibold">⌨️ User Input (comma-separated):</label>
+                <input type="text" id="userInput" class="w-full bg-gray-700 text-white p-2 rounded mt-1" placeholder="Enter input separated by commas..."> 
+            </div>
+            <p class="my-3">made by <b>Manav Naik.</b></p>
+        </div>
+        
+        <div class="w-full lg:max-w-[600px] bg-gray-800 p-4 rounded-lg shadow-lg h-[590px]">
+            <h2 class="text-lg font-semibold mb-2">📜 Output</h2>
+            <pre id="outputConsole" class="bg-black text-green-400 p-3 rounded h-[200px] overflow-auto">press "F9" to execute code</pre>
+        
+            <h2 class="text-lg font-semibold mt-3">🤖 AI output</h2>
+            <div class="chat-box mt-2 bg-black text-green-400 p-3 rounded h-[200px] overflow-auto">
+                <div id="chat-output">Press "enter" to send prompt</div>
+            </div>
+        
+            <div class="card-footer d-flex mt-2">
+                <input class="bg-gray-700 w-full rounded p-2" type="text" id="user-input" placeholder="Enter your prompt here...">
+                <button id="send-btn" class="bg-blue-500 text-white px-4 py-2 rounded ml-2">Send</button>
+            </div>
+        </div>
+
+        
+    </div>
+
+    <div id="shortcutModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center hidden">
+        <div class="bg-gray-700 p-6 rounded-lg shadow-lg w-11/12 max-w-2xl max-h-[80vh] overflow-y-auto">
+            <h2 class="text-xl font-bold mb-4">💻 Code Editor & AI Assistant Guide</h2>
+    
+            <h3 class="text-lg font-semibold mb-2">⌨️ Code Editor Shortcuts</h3>
+            <ul class="list-disc pl-6 space-y-1 text-gray-300 text-sm">
+                <li><strong>NOTE:</strong> Your cursor must be inside the editor for shortcuts to work.</li>
+                <li><strong>Run Code:</strong> <kbd>F9</kbd></li>
+                <li><strong>Multi-Cursor:</strong> <kbd>Ctrl</kbd> + <kbd>Click</kbd></li>
+                <li><strong>Undo:</strong> <kbd>Ctrl</kbd> + <kbd>Z</kbd></li>
+                <li><strong>Redo:</strong> <kbd>Ctrl</kbd> + <kbd>Y</kbd> / <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Z</kbd></li>
+                <li><strong>Find:</strong> <kbd>Ctrl</kbd> + <kbd>F</kbd></li>
+                <li><strong>Indent More:</strong> <kbd>Ctrl</kbd> + <kbd>]</kbd></li>
+                <li><strong>Indent Less:</strong> <kbd>Ctrl</kbd> + <kbd>[</kbd></li>
+            </ul>
+    
+            <h3 class="text-lg font-semibold mt-4 mb-2">🤖 AI Assistant Guide</h3>
+            <ul class="list-disc pl-6 space-y-1 text-gray-300 text-sm">
+                <li><strong>Note:</strong> AI always have code and output as a reference.</li>
+                <li><strong>Note:</strong> all AI responses can be seen in console(F12) also.</li>
+                <li><strong>Send a Message:</strong> Type your query and press <kbd>Enter</kbd>.</li>
+                <li><strong>AI Prompt Rules:</strong></li>
+                <ul class="pl-6">
+                    <li>- give a short and simple explation if necessary.</li>
+                    <li>- AI is an **expert programmer**.</li>
+                    <li>- Provides code in **selected language**.</li>
+                    <li>- **No unnecessary comments**.</li>
+                    <li>- **Simplified formatting** (no extra newlines).</li>
+                    <li>- Can analyze your **current code** and **its output**.</li>
+                </ul>
+                <li><strong>How to Ask for Code Help?</strong></li>
+                <ul class="pl-6">
+                    <li>- **Fix My Code:** "Why is this code not working?"</li>
+                    <li>- **Optimize Code:** "Make this code more efficient."</li>
+                    <li>- **Explain Code:** "What does this function do?"</li>
+                    <li>- **New Code:** "Generate a Python function for sorting numbers."</li>
+                </ul>
+            </ul>
+    
+            <button onclick="closeShortcutModal()" class="mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 w-full">Close</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
+    
+        window.GoogleGenerativeAI = GoogleGenerativeAI;
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>
